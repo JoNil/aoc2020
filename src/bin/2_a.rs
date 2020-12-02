@@ -9,10 +9,7 @@ struct CandidatePassword {
 }
 
 fn parse(line: &str) -> CandidatePassword {
-    let min_count;
-    let max_count;
-    let rule_letter;
-    let password;
+    let (min_count, max_count, rule_letter, password);
 
     scan!(line.bytes() => "{}-{} {}: {}", min_count, max_count, rule_letter, password);
 
