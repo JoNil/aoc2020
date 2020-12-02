@@ -1,6 +1,8 @@
 use aoc2020::get_input;
-use text_io::scan;
+use parse_display::{Display as ParseDisplay, FromStr as ParseFromStr};
 
+#[derive(ParseDisplay, ParseFromStr)]
+#[display("{min_count}-{max_count} {rule_letter}: {password}")]
 struct CandidatePassword {
     min_count: usize,
     max_count: usize,
@@ -9,16 +11,7 @@ struct CandidatePassword {
 }
 
 fn parse(line: &str) -> CandidatePassword {
-    let (min_count, max_count, rule_letter, password);
-
-    scan!(line.bytes() => "{}-{} {}: {}", min_count, max_count, rule_letter, password);
-
-    CandidatePassword {
-        min_count,
-        max_count,
-        rule_letter,
-        password,
-    }
+    line.parse().unwrap()
 }
 
 fn password_valid(candidate: &CandidatePassword) -> bool {

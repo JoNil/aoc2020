@@ -1,6 +1,8 @@
 use aoc2020::get_input;
-use text_io::scan;
+use parse_display::{Display as ParseDisplay, FromStr as ParseFromStr};
 
+#[derive(ParseDisplay, ParseFromStr)]
+#[display("{first_pos}-{second_pos} {rule_letter}: {password}")]
 struct CandidatePassword {
     first_pos: usize,
     second_pos: usize,
@@ -9,16 +11,7 @@ struct CandidatePassword {
 }
 
 fn parse(line: &str) -> CandidatePassword {
-    let (first_pos, second_pos, rule_letter, password);
-
-    scan!(line.bytes() => "{}-{} {}: {}", first_pos, second_pos, rule_letter, password);
-
-    CandidatePassword {
-        first_pos,
-        second_pos,
-        rule_letter,
-        password,
-    }
+    line.parse().unwrap()
 }
 
 fn password_valid(candidate: &CandidatePassword) -> bool {
