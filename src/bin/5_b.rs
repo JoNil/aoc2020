@@ -1,6 +1,5 @@
-use std::collections::HashSet;
-
 use aoc2020::get_input;
+use std::collections::HashSet;
 
 fn resolve_bsp(bytes: &[u8], min: i32, max: i32) -> i32 {
     if bytes.is_empty() {
