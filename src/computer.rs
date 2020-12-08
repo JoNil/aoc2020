@@ -63,11 +63,6 @@ impl<'a> Computer<'a> {
     }
 
     #[inline]
-    pub fn get_program(&self) -> &[Instruction] {
-        &self.program
-    }
-
-    #[inline]
     pub fn step(&mut self) -> bool {
         match self.program[self.pc as usize] {
             Instruction::Acc(data) => {
