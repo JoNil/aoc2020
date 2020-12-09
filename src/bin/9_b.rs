@@ -1,5 +1,6 @@
 use aoc2020::get_input_i32;
 use itertools::Itertools;
+use std::cmp::Ordering;
 
 fn is_sum_of_any_two(preamble: &[i32], value: i32) -> bool {
     preamble
@@ -23,22 +24,26 @@ fn find_weakness(input: &[i32], preamble_size: usize) -> i32 {
 
     for sum_window_start in 0..anomaly_index {
         for sum_window_end in sum_window_start..anomaly_index {
-            if input[sum_window_start..sum_window_end]
+            let sum = input[sum_window_start..sum_window_end]
                 .iter()
                 .copied()
-                .sum::<i32>()
-                == anomaly
-            {
-                let max = input[sum_window_start..sum_window_end]
-                    .iter()
-                    .max()
-                    .unwrap();
-                let min = input[sum_window_start..sum_window_end]
-                    .iter()
-                    .min()
-                    .unwrap();
+                .sum::<i32>();
 
-                return min + max;
+            match sum.cmp(&anomaly) {
+                Ordering::Equal => {
+                    let max = input[sum_window_start..sum_window_end]
+                        .iter()
+                        .max()
+                        .unwrap();
+                    let min = input[sum_window_start..sum_window_end]
+                        .iter()
+                        .min()
+                        .unwrap();
+
+                    return min + max;
+                }
+                Ordering::Greater => continue,
+                _ => (),
             }
         }
     }
