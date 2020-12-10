@@ -12,54 +12,58 @@ fn count_adapter_chains(adapters: &[i32], current: i32, goal: i32) -> i64 {
         .copied()
         .collect_vec();
 
-    match possible_next.len() {
-        0 => 0,
-        1 => {
-            let rest = adapters
-                .iter()
-                .filter(|c| !possible_next.contains(c))
-                .copied()
-                .collect_vec();
+    let mut permutations = 0;
+    for next in possible_next {
+        let rest = adapters
+            .iter()
+            .filter(|c| **c != next)
+            .copied()
+            .collect_vec();
 
-            count_adapter_chains(&rest, *possible_next.iter().max().unwrap(), goal)
-        }
-        2 => {
-            let rest = adapters
-                .iter()
-                .filter(|c| !possible_next.contains(c))
-                .copied()
-                .collect_vec();
-
-            2 * count_adapter_chains(&rest, *possible_next.iter().max().unwrap(), goal)
-        }
-        3 => {
-            let mut permutations = 0;
-            for next in possible_next {
-                let rest = adapters
-                    .iter()
-                    .filter(|c| **c != next)
-                    .copied()
-                    .collect_vec();
-
-                permutations += count_adapter_chains(&rest, next, goal);
-            }
-
-            permutations
-        }
-        _ => panic!(),
+        permutations += count_adapter_chains(&rest, next, goal);
     }
+
+    permutations
 }
 
-fn solve(adapters: &[i32]) -> i64 {
-    let goal = adapters.iter().max().unwrap();
+fn solve(adapters: Vec<i32>) -> i64 {
+    let adapters = {
+        let mut adapters = adapters;
+        adapters.push(0);
+        adapters.sort_unstable();
+        adapters.push(adapters.last().unwrap() + 3);
+        adapters
+    };
 
-    count_adapter_chains(adapters, 0, *goal)
+    let mut sub_groups = Vec::new();
+
+    let mut current_start = 0;
+    let mut last = 0;
+    for (index, value) in adapters.iter().enumerate() {
+        if *value - last == 3 {
+            sub_groups.push((
+                adapters[current_start],
+                &adapters[current_start..(index + 1)],
+            ));
+            current_start = index;
+        }
+
+        last = *value;
+    }
+
+    let mut result = 1;
+
+    for (last, sub_group) in sub_groups {
+        result *= count_adapter_chains(sub_group, last, sub_group[sub_group.len() - 1])
+    }
+
+    result
 }
 
 fn main() {
     let input = get_input_i32();
 
-    let result = solve(&input);
+    let result = solve(input);
 
     println!("{:?}", result);
 }
@@ -69,10 +73,10 @@ mod test {
 
     #[test]
     fn test_solve() {
-        assert_eq!(super::solve(&[16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4]), 8);
+        assert_eq!(super::solve(vec![16, 10, 15, 5, 1, 11, 7, 19, 6, 12, 4]), 8);
 
         assert_eq!(
-            super::solve(&[
+            super::solve(vec![
                 28, 33, 18, 42, 31, 14, 46, 20, 48, 47, 24, 23, 49, 45, 19, 38, 39, 11, 1, 32, 25,
                 35, 8, 17, 7, 9, 4, 2, 34, 10, 3
             ]),
