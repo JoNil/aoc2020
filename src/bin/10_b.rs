@@ -12,19 +12,42 @@ fn count_adapter_chains(adapters: &[i32], current: i32, goal: i32) -> i64 {
         .copied()
         .collect_vec();
 
-    let mut possible_ways = 0;
+    match possible_next.len() {
+        0 => 0,
+        1 => {
+            let rest = adapters
+                .iter()
+                .filter(|c| !possible_next.contains(c))
+                .copied()
+                .collect_vec();
 
-    for next in possible_next {
-        let rest = adapters
-            .iter()
-            .filter(|c| **c != next)
-            .copied()
-            .collect_vec();
+            count_adapter_chains(&rest, *possible_next.iter().max().unwrap(), goal)
+        }
+        2 => {
+            let rest = adapters
+                .iter()
+                .filter(|c| !possible_next.contains(c))
+                .copied()
+                .collect_vec();
 
-        possible_ways += count_adapter_chains(&rest, next, goal);
+            2 * count_adapter_chains(&rest, *possible_next.iter().max().unwrap(), goal)
+        }
+        3 => {
+            let mut permutations = 0;
+            for next in possible_next {
+                let rest = adapters
+                    .iter()
+                    .filter(|c| **c != next)
+                    .copied()
+                    .collect_vec();
+
+                permutations += count_adapter_chains(&rest, next, goal);
+            }
+
+            permutations
+        }
+        _ => panic!(),
     }
-
-    possible_ways
 }
 
 fn solve(adapters: &[i32]) -> i64 {
