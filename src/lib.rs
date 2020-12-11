@@ -1,6 +1,8 @@
 use std::{env, fs};
 
 pub mod computer;
+pub mod map;
+pub mod pos;
 
 pub fn get_input() -> String {
     let program_name = env::current_exe().unwrap();
