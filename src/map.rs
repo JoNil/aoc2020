@@ -1,4 +1,4 @@
-use crate::pos::Pos;
+use crate::Vec2;
 use std::{fmt, iter::FromIterator, str};
 
 #[derive(Clone, Default, Eq, PartialEq)]
@@ -34,7 +34,7 @@ impl Map {
     }
 
     #[inline]
-    pub fn get(&self, pos: Pos) -> Option<char> {
+    pub fn get(&self, pos: Vec2) -> Option<char> {
         if pos.0 < 0 || pos.0 >= self.width || pos.1 < 0 || pos.1 >= self.height {
             None
         } else {
@@ -78,8 +78,8 @@ impl fmt::Debug for Map {
     }
 }
 
-impl FromIterator<(Pos, char)> for Map {
-    fn from_iter<I: IntoIterator<Item = (Pos, char)>>(iter: I) -> Self {
+impl FromIterator<(Vec2, char)> for Map {
+    fn from_iter<I: IntoIterator<Item = (Vec2, char)>>(iter: I) -> Self {
         let mut max_x = 0;
         let mut max_y = 0;
 
@@ -109,7 +109,7 @@ pub struct MapIter<'a> {
 }
 
 impl<'a> Iterator for MapIter<'a> {
-    type Item = (Pos, char);
+    type Item = (Vec2, char);
 
     #[inline]
     fn next(&mut self) -> Option<Self::Item> {
@@ -124,7 +124,7 @@ impl<'a> Iterator for MapIter<'a> {
 
         self.i += 1;
 
-        Some((Pos(x, y), ch))
+        Some((Vec2(x, y), ch))
     }
 }
 

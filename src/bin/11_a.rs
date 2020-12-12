@@ -1,15 +1,15 @@
-use aoc2020::{get_input, map::Map, pos::Pos};
+use aoc2020::{get_input, Map, Vec2};
 
-fn apply_rules(map: &Map, pos: Pos, current: char) -> (Pos, char) {
+fn apply_rules(map: &Map, pos: Vec2, current: char) -> (Vec2, char) {
     let offsets = &[
-        Pos(-1, -1),
-        Pos(0, -1),
-        Pos(1, -1),
-        Pos(-1, 0),
-        Pos(1, 0),
-        Pos(-1, 1),
-        Pos(0, 1),
-        Pos(1, 1),
+        Vec2(-1, -1),
+        Vec2(0, -1),
+        Vec2(1, -1),
+        Vec2(-1, 0),
+        Vec2(1, 0),
+        Vec2(-1, 1),
+        Vec2(0, 1),
+        Vec2(1, 1),
     ];
 
     let adjacent_occupied = offsets

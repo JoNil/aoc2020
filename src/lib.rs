@@ -1,8 +1,11 @@
 use std::{env, fs};
 
 pub mod computer;
-pub mod map;
-pub mod pos;
+mod map;
+mod vec2;
+
+pub use map::Map;
+pub use vec2::Vec2;
 
 pub fn get_input() -> String {
     let program_name = env::current_exe().unwrap();

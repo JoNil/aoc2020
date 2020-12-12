@@ -1,15 +1,15 @@
-use aoc2020::{get_input, map::Map, pos::Pos};
+use aoc2020::{get_input, Map, Vec2};
 
-fn find_adjacent_occupied(map: &Map, pos: Pos) -> i32 {
+fn find_adjacent_occupied(map: &Map, pos: Vec2) -> i32 {
     let directions = &[
-        Pos(-1, -1),
-        Pos(0, -1),
-        Pos(1, -1),
-        Pos(-1, 0),
-        Pos(1, 0),
-        Pos(-1, 1),
-        Pos(0, 1),
-        Pos(1, 1),
+        Vec2(-1, -1),
+        Vec2(0, -1),
+        Vec2(1, -1),
+        Vec2(-1, 0),
+        Vec2(1, 0),
+        Vec2(-1, 1),
+        Vec2(0, 1),
+        Vec2(1, 1),
     ];
 
     let mut adjacent_occupied = 0;
@@ -33,7 +33,7 @@ fn find_adjacent_occupied(map: &Map, pos: Pos) -> i32 {
     adjacent_occupied
 }
 
-fn apply_rules(map: &Map, pos: Pos, current: char) -> (Pos, char) {
+fn apply_rules(map: &Map, pos: Vec2, current: char) -> (Vec2, char) {
     let adjacent_occupied = find_adjacent_occupied(map, pos);
 
     (
@@ -79,7 +79,7 @@ fn main() {
 #[cfg(test)]
 mod test {
 
-    use aoc2020::{map::Map, pos::Pos};
+    use aoc2020::{Map, Vec2};
 
     #[test]
     fn find_adjacent_occupied() {
@@ -96,7 +96,7 @@ mod test {
 #........
 ...#....."
                 ),
-                Pos(3, 4)
+                Vec2(3, 4)
             ),
             8
         );
@@ -108,7 +108,7 @@ mod test {
 .L.L.#.#.#.#.
 ............."
                 ),
-                Pos(1, 1)
+                Vec2(1, 1)
             ),
             0
         );
@@ -124,7 +124,7 @@ mod test {
 #.#.#.#
 .##.##."
                 ),
-                Pos(3, 3)
+                Vec2(3, 3)
             ),
             0
         );
