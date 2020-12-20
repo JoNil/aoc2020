@@ -1,6 +1,5 @@
 use aoc2020::get_input;
 use itertools::Itertools;
-
 use parse_display::{Display as ParseDisplay, FromStr as ParseFromStr};
 
 #[derive(Copy, Clone, Debug, ParseDisplay, ParseFromStr)]
