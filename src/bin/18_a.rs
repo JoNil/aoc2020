@@ -1,6 +1,5 @@
-use std::ops::{Add, Div, Mul, Sub};
-
 use aoc2020::get_input;
+use std::ops::{Add, Div, Mul, Sub};
 
 #[derive(Debug, PartialEq)]
 pub enum Token<'a> {
