@@ -30,6 +30,15 @@ enum Rule {
     Or(Or),
 }
 
+impl Rule {
+    fn get_sequence(&self) -> &Sequence {
+        match self {
+            Rule::Sequence(seq) => seq,
+            _ => panic!("Not a sequence"),
+        }
+    }
+}
+
 #[derive(Debug, ParseDisplay, ParseFromStr)]
 #[display("{no}: {rule}")]
 struct RuleDesc {
@@ -37,61 +46,69 @@ struct RuleDesc {
     rule: String,
 }
 
-fn rule_matches(rule: &Rule, rules: &HashMap<i32, Rule>, mut pattern: &[u8]) -> (bool, i32) {
-    dbg!(&rule);
-    dbg!(pattern);
-    match rule {
-        Rule::Literal(lit) => (!pattern.is_empty() && (pattern[0] == lit.lit as u8), 1),
-        Rule::Or(or) => {
-            if pattern.is_empty() {
-                return (false, 0);
-            }
+fn literal_matches(lit: &Literal, rules: &HashMap<i32, Rule>, mut pattern: &[u8]) -> bool {
+    !pattern.is_empty() && (pattern[0] == lit.lit as u8)
+}
 
-            let (ok1, eaten1) = rule_matches(
-                &Rule::Sequence(Sequence {
-                    seq: vec![or.left_a, or.left_b],
-                }),
-                rules,
-                pattern,
-            );
-
-            let (ok2, eaten2) = rule_matches(
-                &Rule::Sequence(Sequence {
-                    seq: vec![or.left_a, or.left_b],
-                }),
-                rules,
-                pattern,
-            );
-
-            if ok1 {
-                (ok1, eaten1)
-            } else if ok2 {
-                (ok2, eaten2)
-            } else {
-                (false, 0)
-            }
-        }
-        Rule::Sequence(seq) => {
-            let mut total_eaten = 0;
-
-            for seq in seq.seq.iter() {
-                if pattern.len() == 0 {
-                    return (false, 0);
-                }
-
-                let (ok, eaten) = rule_matches(&rules[seq], rules, pattern);
-
-                if !ok {
-                    return (false, 0);
-                }
-
-                total_eaten += eaten;
-                pattern = &pattern[(eaten as usize)..];
-            }
-
-            (true, total_eaten)
-        }
+fn or_matches(or: &Or, rules: &HashMap<i32, Rule>, mut pattern: &[u8]) -> bool {
+    if pattern.is_empty() {
+        return false;
     }
+
+    let (ok1, eaten1) = sequence_matches(
+        &Sequence {
+            seq: vec![or.left_a, or.left_b],
+        },
+        rules,
+        pattern,
+    );
+
+    let (ok2, eaten2) = sequence_matches(
+        &Sequence {
+            seq: vec![or.left_a, or.left_b],
+        },
+        rules,
+        pattern,
+    );
+
+    [(ok1, eaten1), (ok2, eaten2)]
+}
+
+fn sequence_matches(seq: &Sequence, rules: &HashMap<i32, Rule>, mut pattern: &[u8]) -> (bool, i32) {
+    let mut total_eaten = 0;
+
+    for (index, seq_index) in seq.seq.iter().enumerate() {
+        if pattern.is_empty() {
+            return (false, 0);
+        }
+
+        match &rules[seq_index] {
+            Rule::Sequence(seq) => {}
+            Rule::Or(or) => {
+                let [a, b] = or_matches(or, rules, pattern);
+
+                if a.0 {
+                    let reset_with_a = sequence_matches(
+                        &Sequence {
+                            seq: seq.seq[((*seq_index + 1) as usize)..].to_owned(),
+                        },
+                        rules,
+                        &pattern[(a.1 as usize)..],
+                    );
+
+                    if reset_with_a.0 {
+                        return (true, )
+                    }
+                }
+            }
+            Rule::Literal(lit) => {}
+        }
+
+        total_eaten += eaten;
+        pattern = &pattern[(eaten as usize)..];
+    }
+
+    (true, total_eaten)
 }
 
 fn solve(input: &str) -> i32 {
@@ -125,7 +142,7 @@ fn solve(input: &str) -> i32 {
 
     patterns
         .lines()
-        .filter(|p| rule_matches(&rules[&0], &rules, p.as_bytes()).0)
+        .filter(|p| sequence_matches(rules[&0].get_sequence(), &rules, p.as_bytes()).0)
         .count() as i32
 }
 
