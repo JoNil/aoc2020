@@ -71,7 +71,9 @@ impl fmt::Debug for Map {
                 )
                 .unwrap(),
             )?;
-            f.write_str("\n")?;
+            if line < self.height - 1 {
+                f.write_str("\n")?;
+            }
         }
 
         Ok(())
