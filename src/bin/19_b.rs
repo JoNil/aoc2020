@@ -66,18 +66,14 @@ fn expand_to_regex(rule: &Rule, rules: &HashMap<i32, Rule>, variant: i32) -> Str
 
             format!("({}|{})", left, right)
         }
-        Rule::Repeate(rep) => {
-            format!("({})+", expand_to_regex(&rules[rep], rules, variant))
-        }
-        Rule::Inner(left, right) => {
-            format!(
-                r#"{}{{{}}}{}{{{}}}"#,
-                expand_to_regex(&rules[left], rules, variant),
-                variant,
-                expand_to_regex(&rules[right], rules, variant),
-                variant,
-            )
-        }
+        Rule::Repeate(rep) => format!("({})+", expand_to_regex(&rules[rep], rules, variant)),
+        Rule::Inner(left, right) => format!(
+            r#"{}{{{}}}{}{{{}}}"#,
+            expand_to_regex(&rules[left], rules, variant),
+            variant,
+            expand_to_regex(&rules[right], rules, variant),
+            variant,
+        ),
     }
 }
 

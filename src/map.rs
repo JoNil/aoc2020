@@ -3,8 +3,8 @@ use std::{fmt, iter::FromIterator, str};
 
 #[derive(Clone, Default, Eq, PartialEq)]
 pub struct Map {
-    width: i32,
-    height: i32,
+    pub width: i32,
+    pub height: i32,
     data: Vec<u8>,
 }
 
