@@ -52,3 +52,4 @@ aoc_test!(test_19_b => "267");
 aoc_test!(test_20_a => "5966506063747");
 aoc_test!(test_20_b => "1714");
 aoc_test!(test_21_a => "2659");
+aoc_test!(test_21_b => "rcqb,cltx,nrl,qjvvcvz,tsqpn,xhnk,tfqsb,zqzmzl");
