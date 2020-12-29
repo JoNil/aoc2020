@@ -33,6 +33,15 @@ impl Map {
         }
     }
 
+    pub fn from_vec(width: i32, height: i32, data: Vec<u8>) -> Map {
+        assert!(width * height == data.len() as i32);
+        Map {
+            width,
+            height,
+            data,
+        }
+    }
+
     #[inline]
     pub fn get(&self, pos: Vec2) -> Option<char> {
         if pos.0 < 0 || pos.0 >= self.width || pos.1 < 0 || pos.1 >= self.height {
