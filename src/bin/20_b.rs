@@ -17,15 +17,15 @@ enum Transform {
 }
 
 impl Transform {
-    fn apply(self, x: i32, y: i32) -> Vec2 {
+    fn apply(self, x: i32, y: i32, size: i32) -> Vec2 {
         match self {
             Transform::None => Vec2(x, y),
-            Transform::Rot90 => Vec2(9 - y, x),
-            Transform::Rot180 => Vec2(9 - x, 9 - y),
-            Transform::Rot270 => Vec2(y, 9 - x),
-            Transform::Flipped => Vec2(9 - x, y),
-            Transform::FlippedRot90 => Vec2(9 - y, 9 - x),
-            Transform::FlippedRot180 => Vec2(x, 9 - y),
+            Transform::Rot90 => Vec2(size - y, x),
+            Transform::Rot180 => Vec2(size - x, size - y),
+            Transform::Rot270 => Vec2(y, size - x),
+            Transform::Flipped => Vec2(size - x, y),
+            Transform::FlippedRot90 => Vec2(size - y, size - x),
+            Transform::FlippedRot180 => Vec2(x, size - y),
             Transform::FlippedRot270 => Vec2(y, x),
         }
     }
@@ -57,8 +57,8 @@ fn maps_allign(
 
             // Map 2 is right
             (0..map1.height).all(|y| {
-                map1.get(transform1.apply(map1_x, y)).unwrap()
-                    == map2.get(transform2.apply(map2_x, y)).unwrap()
+                map1.get(transform1.apply(map1_x, y, 9)).unwrap()
+                    == map2.get(transform2.apply(map2_x, y, 9)).unwrap()
             })
         }
         (-1, 0) => {
@@ -67,8 +67,8 @@ fn maps_allign(
 
             // Map 2 is left
             (0..map1.height).all(|y| {
-                map1.get(transform1.apply(map1_x, y)).unwrap()
-                    == map2.get(transform2.apply(map2_x, y)).unwrap()
+                map1.get(transform1.apply(map1_x, y, 9)).unwrap()
+                    == map2.get(transform2.apply(map2_x, y, 9)).unwrap()
             })
         }
         (0, 1) => {
@@ -77,8 +77,8 @@ fn maps_allign(
 
             // Map 2 is down
             (0..map1.width).all(|x| {
-                map1.get(transform1.apply(x, map1_y)).unwrap()
-                    == map2.get(transform2.apply(x, map2_y)).unwrap()
+                map1.get(transform1.apply(x, map1_y, 9)).unwrap()
+                    == map2.get(transform2.apply(x, map2_y, 9)).unwrap()
             })
         }
         (0, -1) => {
@@ -87,8 +87,8 @@ fn maps_allign(
 
             // Map 2 is up
             (0..map1.width).all(|x| {
-                map1.get(transform1.apply(x, map1_y)).unwrap()
-                    == map2.get(transform2.apply(x, map2_y)).unwrap()
+                map1.get(transform1.apply(x, map1_y, 9)).unwrap()
+                    == map2.get(transform2.apply(x, map2_y, 9)).unwrap()
             })
         }
         _ => panic!("Maps are not adjacent"),
@@ -177,7 +177,7 @@ fn stitch_map(input: &str) -> Map {
             for map_x in min_x..=max_x {
                 let (_, map, transform) = assembled.get(&Vec2(map_x, map_y)).unwrap();
                 for x in 1..9 {
-                    data.push(map.get(transform.apply(x, y)).unwrap() as u8);
+                    data.push(map.get(transform.apply(x, y, 9)).unwrap() as u8);
                 }
             }
         }
@@ -189,7 +189,7 @@ fn stitch_map(input: &str) -> Map {
 fn pattern_match(map: &Map, pattern: &Map, pos: Vec2, transform: Transform) -> bool {
     for y in 0..pattern.height {
         for x in 0..pattern.width {
-            let map_pos = transform.apply(pos.0 + x, pos.1 + y);
+            let map_pos = transform.apply(pos.0 + x, pos.1 + y, map.width - 1);
 
             if let Some(map_c) = map.get(map_pos) {
                 let pattern_c = pattern.get(Vec2(x, y)).unwrap();
@@ -210,6 +210,8 @@ fn pattern_match(map: &Map, pattern: &Map, pos: Vec2, transform: Transform) -> b
 
 fn solve(input: &str) -> i64 {
     let map = stitch_map(input);
+
+    assert!(map.width == map.height);
 
     let pattern = Map::from_input(
         "                  # 
@@ -233,7 +235,7 @@ fn solve(input: &str) -> i64 {
 
             for y in 0..map.height {
                 for x in 0..map.width {
-                    let map_pos = transform.apply(x, y);
+                    let map_pos = transform.apply(x, y, map.width - 1);
                     let map_c = map.get(map_pos).unwrap();
 
                     if map_c == '#' {
